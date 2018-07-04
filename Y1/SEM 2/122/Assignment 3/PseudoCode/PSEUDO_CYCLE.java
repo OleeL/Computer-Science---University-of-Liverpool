@@ -1,0 +1,18 @@
+FUNCTION cycle(number, label)
+	super(number, label)
+
+FUNCTION run()
+	SELF.reset()
+	WHILE (TRUE)
+		IF (SELF.isComplete())
+			RETURN SELF.getSteps()
+		randomNum <- RANDOM (0, SELF.getCoopLength()-1)
+		SELF.oneStep(randomNum, (randomNum+1 MODULUS SELF.getCoopLength()))
+
+FUNCTION reset()
+	FOR i in 0, SELF.getCoopLength()
+		SELF.setCoop(i,TRUE)
+	IF (SELF.getLabel() <- 2)
+		SELF.setCoop(Math.floor(SELF.getCoopLength()/2)-1, FALSE)
+	SELF.setCoop(SELF.getCoopLength()-1, FALSE)
+	SELF.setSteps(0)

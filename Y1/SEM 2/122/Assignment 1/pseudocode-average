@@ -1,0 +1,32 @@
+
+FUNCTION ret(l):
+	sum <- 0
+	FOR i IN 1,l.length:
+		sum <- sum + l[i]
+	RETURN (sum/l.length())
+
+
+FUNCTION main():
+	unfairdice <- [2,3,4,5,6,6]
+	pwdScores  <- [] //points with dice total (pwd)
+	pudScores  <- [] //points with unfair dice total (pud)
+	index <- 0
+
+	FOR x IN 1,6:
+		FOR y IN 1,6:
+			FOR z IN 1,6:
+				pwd <- ThreeDiceScorer(x, y, z) //points with dice (pud)
+				pwdScores[index] <- pwd.getScore()
+				index <- index + 1
+
+	OUTPUT("Average with 3, fair, 6 sided die: ")
+	OUTPUT(ret(pwdScores))
+	index <- 0
+	FOR x IN 1,6:
+		FOR y IN 1,6:
+			FOR x IN 0,5:
+				pud <- ThreeDiceScorer(x, y, unfairdice[z]) //points with dice (pud)
+				pudScores[index] <- pud.getScore()
+				index <- index + 1
+	OUTPUT("Average with 2, fair, 6 sided die and 1 unfair dice being: {2,3,4,5,6,6}: ")
+	OUTPUT(ret(pudScores))

@@ -1,0 +1,12 @@
+CLASS BronzeAccount EXTENDS StandardAccount:
+	FUNCTION BronzeAccount(int dtmin, int ntmin, int mbmonth):
+		super(dtmin, ntmin, mbmonth)
+		account_type <- "Bronze"
+		package_cost <- 36.00
+		daytime_phone_cost <- 0.12
+		ew_phone_cost <- 0.05
+		number_of_tv_channels <- 60
+		broadband_data <- 500
+		broadband_data_interest <- 0.02
+		free_spotify <- false
+		music_on_demand <- false

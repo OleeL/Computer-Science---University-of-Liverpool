@@ -1,0 +1,61 @@
+	FUNCTION main(args):
+		GLOBAL alphabetlower
+		GLOBAL alphabetupper
+		IF args.LENGTH < 1 THEN
+			EXIT()
+        FOR i IN "a","z" DO
+            LIST alphabetlower.add(i)
+			LIST alphabetupper.add(i.UPPERCASE())
+		OUTPUT("==============================")
+		OUTPUT(args[i])
+		OUTPUT("==============================")
+		OUTPUT(decrypt(args[i]))
+
+	FUNCTION shifttext(shift_num, text):
+		stringLENGTH <- text.LENGTH()
+		finalstring <- ""
+		character_in_alphabet <- FALSE
+		FOR i IN (0, text.LENGTH()) DO
+			c <- text[i] //gets the first letter of the string and puts it in 
+			FOR v IN (0,26) DO
+				IF (c == alphabetlower[v] OR c == alphabetupper[v]) THEN
+					character_in_alphabet <- TRUE
+					IF (c.ISUPPER()) THEN
+						finalstring <- finalstring + alphabetupper[(v + shift_num MOD 26)]
+					ELSE 
+						finalstring <- finalstring + alphabetlower[(v + shift_num MOD 26)]
+					BREAK
+			IF (!character_in_alphabet) THEN
+				finalstring <- finalstring + c
+			character_in_alphabet <- FALSE
+		RETURN finalstring
+	
+
+	FUNCTION getStringValue(text):
+		finalnumber <- 0
+		power <- 0
+		FOR i IN (0, text.LENGTH()) DO
+			FOR v IN (0,26) DO
+				c <- i[v]
+				IF (c == alphabetupper[v] OR c == alphabetlower[v]) THEN
+					power <- (frequency(text, c) - knownFreq[v])^2
+					finalnumber <- finalnumber + (power / (knownFreq[v]))
+		RETURN finalnumber
+		
+	FUNCTION frequency(text, letter):
+		count <- 0
+		FOR i IN (0, text.LENGTH()) DO
+			IF (text[i] == letter) THEN
+				count+=1
+		RETURN count
+	
+
+	FUNCTION decrypt(text):
+		value <- getStringValue(text)
+		newtext <- text
+		FOR i IN (0,26) DO
+			IF (getStringValue(shifttext(i,text)) < value) THEN
+				value <- getStringValue(shifttext(i,text))
+				newtext <- shifttext(i,text)
+		RETURN newtext
+	

@@ -1,0 +1,76 @@
+
+FUNCTION list_words_in_doc(String doc):
+	strlist <- LIST[STRING]
+	WHILE (line /= NULL)
+		//splits up all of the words. so that words words with '.' or ',' aren't considered part of the word
+		words <- line.REMOVEPUNC() //this puts all of the words in the line into a list too
+		line <- FILEREAD(doc)
+		FOR i IN (0,words.LENGTH) DO
+			IF (words[i] == NULL OR words[i] == "") THEN
+				PASS
+			ELSE
+				strlist.ADD(words[i])
+	RETURN strarray
+
+
+//returns the number of times a given word in the document appears.
+FUNCTION word_appears_in_doc(l, String t):
+	counter <- 0
+	FOR i IN (0, l.LENGTH) DO
+		IF (l[i] == t) THEN
+			counter++
+	RETURN counter
+
+//returns TRUE of FALSE whether t is in a document or not
+FUNCTION word_in_list_bool(String[] list, String t):
+	FOR i IN (0, list.LENGTH) DO
+		IF (list[i] == t) THEN
+			RETURN TRUE
+	RETURN FALSE
+
+
+//Calculate term frequency
+FUNCTION tf(t, list):
+	RETURN word_appears_in_doc(list, t)/list.LENGTH
+
+FUNCTION idf(t, list):
+	tc <- 0 //TC is the term count. Term count is the number of documents that contain the term
+	FOR x IN (0,list.LENGTH) DO //lists over every file
+		IF (word_in_list_bool(list.GET(x), t))
+			tc++
+	RETURN LOG(list.size() / tc)
+
+
+FUNCTION tf_idf(file, t, list):
+	RETURN (tf(t, file)*idf(t, list))
+
+
+//main part of the program takes the arguments of the txt file names and locations when the program executes.
+FUNCTION main(String[] args):
+	IF (args.LENGTH < 1) THEN
+		OUTPUT("Oops, you haven't given enough parameters! Usage: java TFIDF \"filename.txt\" ...")
+		EXIT(1)
+	OUTPUT("\nMax TFIDF value FOR each file.\n")
+	//This is where all of the inverse term frequency data is being held.
+	list <- LIST[STRING[]]
+	tfidflist <- HASHMAP
+	FOR i IN (0, args.LENGTH) DO
+		list.ADD(list_words_in_doc(args[i]))
+	//FOR loop that runs FOR the number of txt files entered to the progrma.
+	FOR i IN (0, args.LENGTH) DO
+		FOR v IN (0, list.GET(i).LENGTH) DO
+			IF (NOT tfidflist.CONTAINS(list.GET(i)[v]))
+				tfidflist.PUT(list.GET(i)[v], tf_idf(list.GET(i), list.GET(i)[v], list))
+	//FOR loop that runs FOR the number of txt files entered to the progrma.
+	FOR i IN (0, args.LENGTH) DO
+		highest_value <- 0.0 //This is defined FOR the next section
+		highest_word <- "no data" //this data will also appear IF no important words are found.
+		OUTPUT("==========")
+		OUTPUT(args[i])
+		OUTPUT("==========")
+		FOR v IN (0, list.GET(i).LENGTH) DO
+			IF (tfidflist.GET(list.GET(i)[v]) >= highest_value) THEN
+				highest_value <- tfidflist.GET(list.GET(i)[v])
+				highest_word <- list.GET(i)[v]
+		OUTPUT(highest_word)
+		OUTPUT(highest_value)

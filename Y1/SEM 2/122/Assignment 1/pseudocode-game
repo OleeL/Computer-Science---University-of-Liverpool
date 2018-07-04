@@ -1,0 +1,67 @@
+
+FUNCTION roll():
+	LIST l
+	FOR i IN 0,5:
+		l[i] <- RANDOM_INTEGER(1,6)
+	RETURN l
+
+FUNCTION sumOfList(list):
+	sum <- 0
+	FOR i IN 0, list.length():
+		sum <- sum + l[i]
+	RETURN sum
+
+FUNCTION main():
+	WHILE TRUE:
+		OUTPUT("Input the number of rounds to play (min 0): ")
+		rounds <- INPUT_INTEGER
+		IF rounds > -1:
+			BREAK
+		ELSE:
+			OUTPUT("Please enter a positive integer or 0")
+	player1scores <- LIST
+	player2scores <- LIST
+    tdsList1 <- LIST
+    tdsList2 <- LIST
+    IF rounds != 0:
+		WHILE (rounds >= roundspassed):
+			r <- roll()
+			tdsList1 <- ThreeDiceScorer(r[0],r[1],r[2])
+			tdsList2 <- ThreeDiceScorer(r[3],r[4],r[5])
+			OUTPUT("Round: "+roundspassed)
+			OUTPUT("Player 1: "+tdsList1[roundspassed-1].getDie1()+" "+tdsList1[roundspassed-1].getDie2()+" "+tdsList1[roundspassed-1].getDie3())
+			OUTPUT("Score: "+tdsList1[roundspassed-1].getScore())
+			OUTPUT("Player 2: "+tdsList2[roundspassed-1].getDie1()+" "+tdsList2[roundspassed-1].getDie2()+" "+tdsList2[roundspassed-1].getDie3())
+			OUTPUT("Score: "+tdsList2[roundspassed-1].getScore())
+			IF (tdsList1[roundspassed-1].getScore() > tdsList2[roundspassed-1].getScore()):
+				OUTPUT("Round winner is player 1.")
+			ELSE:
+				IF (tdsList1[roundspassed-1].getScore() == tdsList2[roundspassed-1].getScore()):
+					OUTPUT("Round is tied!")
+			ELSE:
+				OUTPUT("Round winner is player 2.")
+			roundspassed <- roundspassed + 1
+		FOR i IN 0, rounds:
+			player1scores[i] <- tdsList1[i].getScore()
+			player2scores[i] <- tdsList2[i].getScore()
+		FOR i IN 0, rounds:
+			IF (player1scores[i] > player2scores[i]):
+				totalWins1 <- totalWins1 + 1
+			ELSE:
+				IF (player1scores[i] == player2scores[i]):
+					//do nothing
+			ELSE:
+				totalWins2 <- totalWins2 + 1
+		OUTPUT("Total wins: Player 1: "+totalWins1+"     Player 2: "+totalWins2)
+		OUTPUT("Total points: Player 1: "+sumOfList(player1scores)+" Player 2: "+sumOfList(player2scores))
+        OUTPUT("Average points per rounds: Player 1: "+Average.ret(player1scores)) 
+        OUTPUT("Player 2: "+Average.ret(player2scores)) 
+        IF (totalWins1 > totalWins2):
+			OUTPUT("Overall points winner is player 1.")
+		ELSE:
+			IF (totalWins1 == totalWins2):
+				OUTPUT("Overall points outcome is tied!")
+			ELSE:
+				OUTPUT("Overall points winner is player 2.")
+	ELSE:
+		EXIT()

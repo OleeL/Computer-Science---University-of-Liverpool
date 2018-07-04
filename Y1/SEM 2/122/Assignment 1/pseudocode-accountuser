@@ -1,0 +1,85 @@
+FUNCTION inputs():
+	inputs <- LIST
+	WHILE (TRUE):
+		OUTPUT("Please enter the number of daytime minutes used per month: ")
+		inputs[0] <- INPUT()
+		IF (inputs[0] >= 0)
+			BREAK
+		ELSE
+			OUTPUT("Number has to be greater than or equal to 0")
+	
+	WHILE (TRUE):
+		OUTPUT("Please enter the number of evening/weekend minutes used per month: ")
+		inputs[1] <- INPUT()
+		IF (inputs[1] >= 0)
+			BREAK
+		ELSE
+			OUTPUT("Number has to be greater than or equal to 0")
+	
+	WHILE (TRUE):
+	
+		OUTPUT("Please enter the number of Megabytes used per month: ")
+		inputs[2] <- INPUT()
+		IF (inputs[2] >= 0)
+			BREAK
+		ELSE
+			OUTPUT("Number has to be greater than or equal to 0")
+	RETURN inputs
+
+FUNCTION main():
+	inputs <- inputs()
+	bronze <- BronzeAccount(inputs[0],inputs[1], inputs[2])
+	silver <- SilverAccount(inputs[0],inputs[1], inputs[2])
+	gold   <- GoldAccount(inputs[0],inputs[1], inputs[2])
+	bronze.summary()
+	silver.summary()
+	gold.summary()
+	cost = []
+	temp = 0.00
+	cost[0] <- bronze.getTotalCost()
+	cost[1] <- silver.getTotalCost()
+	cost[2] <- gold.getTotalCost()
+	//putting the cheapest cost in order
+	IF (cost[1] < cost[0]):
+	   tmp <- cost[1]
+	   cost[1] <- cost[0]
+	   cost[0] <- tmp
+
+	IF (cost[2] < cost[1]):
+	   tmp <- cost[2]
+	   cost[2] <- cost[1]
+	   cost[1] <- tmp
+
+	IF (cost[1] < cost[0]):
+	   tmp <- cost[1]
+	   cost[1] <- cost[0]
+	   cost[0] <- tmp
+
+	IF (cost[0] == cost[2]):
+		OUTPUT("All account types are equally as cheap. However, we recommend that you use the "+gold.account_type+" account.")
+		OUTPUT("This is because you get the most TV channels, a free spotIFy account and music on demand.")
+		OUTPUT("You also have the ability to have unlimited calls and have less interest on going over broadband interest.")
+	ELSE:
+		IF (cost[0] == cost[1]):
+			IF ((cost[0] == bronze.getTotalCost() AND cost[1] == silver.getTotalCost() ) OR (cost[0] == silver.getTotalCost() AND cost[1] == bronze.getTotalCost())):
+				OUTPUT("Bronze account and Silver Account types are equally as cheap. However, we recommend that you use the "+silver.account_type+" account.")
+				OUTPUT("This is because you get more TV channels a free spotIFy account and music on demand.")
+				OUTPUT("You will also get more minutes than the bronze account and you're charged less interest on going over broadband limit.")
+			ELSE:
+				IF ((cost[0] == bronze.getTotalCost() AND cost[1] == gold.getTotalCost() ) OR (cost[0] == gold.getTotalCost() AND cost[1] == bronze.getTotalCost())):
+					OUTPUT("Bronze and Gold account types are equally as cheap. However, we recommend that you use the "+gold.account_type+" account.")
+					OUTPUT("This is because you get the most TV channels, a free spotIFy account and music on demand.")
+					OUTPUT("You also have the ability to have unlimited calls and you're charged less interest on going over broadband limit.")
+				ELSE:
+					IF ((cost[0] == silver.getTotalCost() AND cost[1] == gold.getTotalCost() ) OR (cost[0] == gold.getTotalCost() AND cost[1] == silver.getTotalCost())):
+						OUTPUT("Gold and Silver account types are equally as cheap. However, we recommend that you use the "+gold.account_type+" account.")
+						OUTPUT("This is because you get the most TV channels, a free spotIFy account and music on demand.")
+						OUTPUT("You also have the ability to have unlimited calls and you're charged less interest on going over broadband limit.")
+		ELSE:
+			IF (cost[0] == bronze.getTotalCost()):
+				OUTPUT(bronze.account_type+" Account is cheapest cost.")
+			ELSE:
+				IF (cost[0] == silver.getTotalCost()):
+					OUTPUT(silver.account_type+" Account is cheapest cost.")
+				ELSE:
+					OUTPUT(gold.account_type+" Account is cheapest cost.")

@@ -1,0 +1,43 @@
+ABSTRACT CLASS StandardAccount:
+	PROTECTED user_DAYTIMEMINS        //users parameters    [integer] 
+	PROTECTED user_NIGHTTIMEMINS      //users parameters    [integer]   
+	PROTECTED user_MBPERMONTH         //users parameters    [integer]
+	PROTECTED account_type            //bronze/silver/gold  [String]
+	PROTECTED package_cost            //per month           
+	PROTECTED daytime_phone_cost      //per minute          [pence]
+	PROTECTED ew_phone_cost           //per minute          [pence]
+	PROTECTED number_of_tv_channels   //                    [integer]
+	PROTECTED broadband_data          //megabytes per month [integer]
+	PROTECTED broadband_data_interest //amount over limit   [pence]
+	PROTECTED free_spotify            //£0 spotify on S+G   [boolean]
+	PROTECTED music_on_demand         //music on demand S+G [boolean]
+
+	FUNCTION StandardAccount(dtmin, ntmin, mbmonth): 
+        user_DAYTIMEMINS   <- dtmin
+        user_NIGHTTIMEMINS <- ntmin
+        user_MBPERMONTH    <- mbmonth
+
+	//prints out the cost of overything and what's included
+	FUNCTION summary():
+		OUTPUT("Account Summary for "+account_type+" Account:")
+		OUTPUT("Package Cost: "+package_cost))
+		OUTPUT("Cost of daytime calls: "+daytime_phone_cost)+"/min");
+		OUTPUT("Cost of evening and weekend calls: "+ew_phone_cost)+"/min")
+		OUTPUT("Number of Channels: "+number_of_tv_channels)
+		OUTPUT("Broadband Included: "+broadband_data+"Mb")
+		OUTPUT("Broadband Cost (above included limit): "+broadband_data_interest))
+		OUTPUT("Total daytime calls cost: "+(daytime_phone_cost*user_DAYTIMEMINS)))
+		OUTPUT("Total evening calls cost: "+(ew_phone_cost*user_NIGHTTIMEMINS)))
+		OUTPUT("Total (extra) broadband cost: "+getBroadbandCost()))
+		OUTPUT("Total cost: "+getTotalCost()))
+		OUTPUT("Spotify Account provided: "+free_spotify)
+		OUTPUT("Music on Demand provided: "+music_on_demand)
+
+	//broadband_data, broadband_data_interest, user_MBPERMONTH
+	FUNCTION getBroadbandCost():
+		RETURN broadband_data_interest*MAX(0, user_MBPERMONTH-broadband_data))
+		//the smallest number the number returned above is 0 because of the MAX function
+
+	//gets the total cost
+	FUNCTION getTotalCost() :
+		RETURN (daytime_phone_cost*user_DAYTIMEMINS)+(ew_phone_cost*user_NIGHTTIMEMINS)+getBroadbandCost()+package_cost

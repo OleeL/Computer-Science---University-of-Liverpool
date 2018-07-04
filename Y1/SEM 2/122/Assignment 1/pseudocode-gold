@@ -1,0 +1,12 @@
+CLASS GoldAccount EXTENDS StandardAccount:
+	FUNCTION GoldAccount(int dtmin, int ntmin, int mbmonth):
+		super(dtmin, ntmin, mbmonth)
+		account_type <- "Gold"
+		package_cost <- 61.00
+		daytime_phone_cost <- 0.0
+		ew_phone_cost <- 0.0
+		number_of_tv_channels <- 230
+		broadband_data <- 1520
+		broadband_data_interest <- 0.01
+		free_spotify <- true
+		music_on_demand <- true

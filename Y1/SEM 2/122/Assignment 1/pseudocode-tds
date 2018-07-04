@@ -1,0 +1,12 @@
+FUNCTION ThreeDiceScorer(s1, s2, s3) 
+    INHERIT(s1,s2,s3)   //inherits from ThreeDiceScorer 
+    points <- s1+s2+s3   //adds the dices together to get the base points
+
+FUNCTION getScore():
+    IF (threeSame())
+        RETURN points + 60
+    IF (runOfThree())
+        RETURN points + 40
+    IF (pair())
+        RETURN points + 20
+    RETURN points
