@@ -1,1 +1,1 @@
-# Computer-Science---University-of-Liverpool
+# University of Liverpool - Computer Science
