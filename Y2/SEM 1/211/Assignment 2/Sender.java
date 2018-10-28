@@ -1,8 +1,8 @@
 /*************************************
  * Filename:  Sender.java
- * Names:
- * Student-IDs:
- * Date:
+ * Names: Oliver Legg
+ * Student-IDs: 201244658
+ * Date: 28/10/2018
  *************************************/
 import java.util.Random;
 
