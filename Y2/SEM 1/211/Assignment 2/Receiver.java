@@ -1,8 +1,8 @@
 /*************************************
  * Filename:  Receiver.java
- * Names: Oliver Legg
- * Student-IDs: 201244658
- * Date: 28/10/2018
+ * Names:
+ * Student-IDs:
+ * Date:
  *************************************/
 import java.util.Random;
 
@@ -94,6 +94,14 @@ public class Receiver extends NetworkHost
     
     // Also add any necessary methods (e.g. checksum of a String)
 
+    private int checksum(String text)
+    {
+        int sum = 0;
+        for (int i = 0; i < text.length(); i++)
+            sum += Character.getNumericValue(text.charAt(i));
+        return sum;
+    }
+
     // This is the constructor.  Don't touch!
     public Receiver(int entityName,
                        EventList events,
@@ -112,6 +120,10 @@ public class Receiver extends NetworkHost
     // packet sent from the sender.
     protected void Input(Packet packet)
     {
+        if (packet.getChecksum() == checksum(packet.getPayload()))
+            System.out.println("Passed checksum");
+        else
+            System.out.println("Failed Checksum");
     }
     
 

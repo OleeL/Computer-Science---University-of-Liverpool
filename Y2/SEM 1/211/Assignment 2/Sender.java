@@ -1,8 +1,8 @@
 /*************************************
  * Filename:  Sender.java
- * Names: Oliver Legg
- * Student-IDs: 201244658
- * Date: 28/10/2018
+ * Names:
+ * Student-IDs:
+ * Date:
  *************************************/
 import java.util.Random;
 
@@ -94,6 +94,14 @@ public class Sender extends NetworkHost
 
     // Also add any necessary methods (e.g. checksum of a String)
 
+    private int checksum(String text)
+    {
+        int sum = 0;
+        for (int i = 0; i < text.length(); i++)
+            sum += Character.getNumericValue(text.charAt(i));
+        return sum;
+    }
+
     // This is the constructor.  Don't touch!
     public Sender(int entityName,
                        EventList events,
@@ -111,6 +119,15 @@ public class Sender extends NetworkHost
     // the receiving application layer.
     protected void Output(Message message)
     {
+        System.out.println("\n");
+        System.out.println("MESSAGE BEING SENT:");
+        System.out.println(message.getData());
+        System.out.println();
+        int seqnum = message.getData().length();
+        int acknum = 1;
+        int checksum = checksum(message.getData());
+        Packet p = new Packet(seqnum, acknum, checksum, message.getData());
+        udtSend(p);
     }
     
     // This routine will be called whenever a packet sent from the receiver 
@@ -119,6 +136,7 @@ public class Sender extends NetworkHost
     // sent from the receiver.
     protected void Input(Packet packet)
     {
+        System.out.println("PACKET RECEIVED FROM SENDER");
     }
     
     // This routine will be called when the senders's timer expires (thus 
@@ -127,6 +145,7 @@ public class Sender extends NetworkHost
     // stopTimer(), above, for how the timer is started and stopped. 
     protected void TimerInterrupt()
     {
+
     }
     
     // This routine will be called once, before any of your other sender-side 
@@ -135,6 +154,7 @@ public class Sender extends NetworkHost
     // of the sender).
     protected void Init()
     {
+
     }
 
 }
