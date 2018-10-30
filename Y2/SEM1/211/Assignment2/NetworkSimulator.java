@@ -105,6 +105,7 @@ public class NetworkSimulator
             }
             
             // Perform the appropriate action based on the event 
+            System.out.println(next.getType());
             switch (next.getType())
             {
                 case TIMERINTERRUPT:

@@ -124,7 +124,7 @@ public class Sender extends NetworkHost
         System.out.println(message.getData());
         System.out.println();
         int seqnum = message.getData().length();
-        int acknum = 1;
+        int acknum = 2;
         int checksum = checksum(message.getData());
         Packet p = new Packet(seqnum, acknum, checksum, message.getData());
         udtSend(p);

@@ -120,8 +120,11 @@ public class Receiver extends NetworkHost
     // packet sent from the sender.
     protected void Input(Packet packet)
     {
-        if (packet.getChecksum() == checksum(packet.getPayload()))
+        System.out.println("This should be running");
+        if (packet.getChecksum() == checksum(packet.getPayload())){
             System.out.println("Passed checksum");
+            deliverData(packet.getPayload());
+        }
         else
             System.out.println("Failed Checksum");
     }
@@ -134,6 +137,7 @@ public class Receiver extends NetworkHost
     // of the receiver).
     protected void Init()
     {
+        System.out.println(getReceivedData());
     }
 
 }
