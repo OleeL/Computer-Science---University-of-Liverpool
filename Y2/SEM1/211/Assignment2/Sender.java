@@ -1,8 +1,14 @@
 /*************************************
  * Filename:  Sender.java
- * Names:
+ * Names: 
+ *              Oliver Legg
+ *              Victor Andres Del Milagro Hidalgo Rivas
+ * 
  * Student-IDs:
- * Date:
+ *              201244658
+ *              201233880
+ * 
+ * Date: 1/11/2018
  *************************************/
 import java.util.Random;
 
@@ -87,19 +93,42 @@ public class Sender extends NetworkHost
      *      String getPayload()
      *          returns the Packet's payload
      *
+     *  Useful links
+     * https://cgi.csc.liv.ac.uk/~gairing/COMP211/
+     * https://cgi.csc.liv.ac.uk/~gairing/COMP211/LN/COMP211_Topic3_Transport.pdf
+     * https://cgi.csc.liv.ac.uk/~gairing/COMP211/A2/
+     * 
      */
 
     // Add any necessary class variables here. They can hold
     // state information for the sender. 
+    private int seqnum;
+    private int acknum;
+    private Packet tmp_packet;
+    private double t;
 
     // Also add any necessary methods (e.g. checksum of a String)
 
-    private int checksum(String text)
+    // Checksum a given string
+    private final int checksum(String text)
     {
         int sum = 0;
         for (int i = 0; i < text.length(); i++)
             sum += Character.getNumericValue(text.charAt(i));
         return sum;
+    }
+
+    // Gets the number of bytes in a string
+    private final int getBytes(String text)
+    {
+        return text.length();
+    }
+
+    // Runs if the 
+    private final void resendMessage()
+    {
+        startTimer(t);
+        udtSend(tmp_packet);
     }
 
     // This is the constructor.  Don't touch!
@@ -119,24 +148,40 @@ public class Sender extends NetworkHost
     // the receiving application layer.
     protected void Output(Message message)
     {
-        System.out.println("\n");
-        System.out.println("MESSAGE BEING SENT:");
-        System.out.println(message.getData());
-        System.out.println();
-        int seqnum = message.getData().length();
-        int acknum = 2;
-        int checksum = checksum(message.getData());
-        Packet p = new Packet(seqnum, acknum, checksum, message.getData());
-        udtSend(p);
+        // Starts the timer.
+        startTimer(t);
+
+        // Sending the packet and sending it to receiver and saving the packet temporarily.
+        tmp_packet = new Packet(seqnum, acknum, checksum(message.getData()), message.getData());
+        udtSend(tmp_packet);
+
+        // Saving the message to a temp message variable
+        acknum = getBytes(message.getData());
     }
     
-    // This routine will be called whenever a packet sent from the receiver 
+    // This routine will be called whenever a packet sent from the receiver
     // (i.e. as a result of udtSend() being done by a receiver procedure)
     // arrives at the sender.  "packet" is the (possibly corrupted) packet
     // sent from the receiver.
     protected void Input(Packet packet)
     {
-        System.out.println("PACKET RECEIVED FROM SENDER");
+        // The timer stops because I have recieved something from the reciever
+        stopTimer();
+
+        // Checking if the message was acknowedged if it was then increase
+        // the ack and seqnum. If it wasn't then try to send the message again
+        if (acknum == packet.getAcknum()){
+            
+            // Accepted
+            acknum = packet.getAcknum();
+            seqnum += packet.getAcknum();
+        }
+        else
+        {
+            // Message that was sent was corrupt
+            resendMessage();
+        }
+
     }
     
     // This routine will be called when the senders's timer expires (thus 
@@ -145,16 +190,19 @@ public class Sender extends NetworkHost
     // stopTimer(), above, for how the timer is started and stopped. 
     protected void TimerInterrupt()
     {
-
+        resendMessage();
     }
     
     // This routine will be called once, before any of your other sender-side 
     // routines are called. It should be used to do any required
     // initialization (e.g. of member variables you add to control the state
     // of the sender).
+
     protected void Init()
     {
-
+        seqnum = 0;
+        acknum = 0;
+        t = 40;
     }
 
 }

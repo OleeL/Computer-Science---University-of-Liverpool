@@ -1,8 +1,14 @@
 /*************************************
  * Filename:  Receiver.java
- * Names:
+ * Names: 
+ *              Oliver Legg
+ *              Victor Andres Del Milagro Hidalgo Rivas
+ * 
  * Student-IDs:
- * Date:
+ *              201244658
+ *              201233880
+ * 
+ * Date: 1/11/2018
  *************************************/
 import java.util.Random;
 
@@ -94,13 +100,19 @@ public class Receiver extends NetworkHost
     
     // Also add any necessary methods (e.g. checksum of a String)
 
-    private int checksum(String text)
+    private final int checksum(String text)
     {
         int sum = 0;
         for (int i = 0; i < text.length(); i++)
             sum += Character.getNumericValue(text.charAt(i));
         return sum;
     }
+
+    private final int getBytes(String text)
+    {
+        return text.length();
+    }
+
 
     // This is the constructor.  Don't touch!
     public Receiver(int entityName,
@@ -113,22 +125,24 @@ public class Receiver extends NetworkHost
         super(entityName, events, pLoss, pCorrupt, trace, random);
     }
 
-    
     // This routine will be called whenever a packet from the sender
     // (i.e. as a result of a udtSend() being done by a Sender procedure)
     // arrives at the receiver. Argument "packet" is the (possibly corrupted)
     // packet sent from the sender.
     protected void Input(Packet packet)
     {
-        System.out.println("This should be running");
+        // If the checksum passes then deliver the data
+        // Seq, ack, check, payload
         if (packet.getChecksum() == checksum(packet.getPayload())){
-            System.out.println("Passed checksum");
+            System.out.println("deliverData: Passed checksum");
+            udtSend(new Packet(packet.getSeqnum(), getBytes(packet.getPayload()), 0));
             deliverData(packet.getPayload());
         }
-        else
-            System.out.println("Failed Checksum");
+        else{
+            System.out.println("deliverData: Failed Checksum");
+            udtSend(new Packet(packet.getSeqnum(), -1, 0));
+        }
     }
-    
 
     
     // This routine will be called once, before any of your other receiver-side
@@ -137,7 +151,7 @@ public class Receiver extends NetworkHost
     // of the receiver).
     protected void Init()
     {
-        System.out.println(getReceivedData());
+
     }
 
 }
