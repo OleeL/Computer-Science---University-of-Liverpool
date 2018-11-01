@@ -97,6 +97,7 @@ public class Receiver extends NetworkHost
 
     // Add any necessary class variables here. They can hold
     // state information for the receiver.
+    private int failedCheckSum;
     
     // Also add any necessary methods (e.g. checksum of a String)
 
@@ -140,7 +141,7 @@ public class Receiver extends NetworkHost
         }
         else{
             System.out.println("deliverData: Failed Checksum");
-            udtSend(new Packet(packet.getSeqnum(), -1, 0));
+            udtSend(new Packet(packet.getSeqnum(), failedCheckSum, 0));
         }
     }
 
@@ -151,7 +152,7 @@ public class Receiver extends NetworkHost
     // of the receiver).
     protected void Init()
     {
-
+        failedCheckSum = -1;
     }
 
 }
