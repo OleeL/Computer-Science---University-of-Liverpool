@@ -12,10 +12,9 @@
  *************************************/
 import java.util.Random;
 
-// If messages are taking too long to send, I don't want missed messages.
-// I created an arraylist data structure to put the messages in.
-// It doesn't say that I can't import other libraries.
-// I have tested ArrayList in the linux farms and it works.
+// I created an ArrayList data structure to put the packets in.
+// It doesn't say that I can't import other libraries in the requirements so I have.
+// I have tested the ArrayList in the linux farms and it works.
 import java.util.ArrayList;
 
 public class Sender extends NetworkHost
@@ -98,11 +97,6 @@ public class Sender extends NetworkHost
      *          returns the checksum of the Packet
      *      String getPayload()
      *          returns the Packet's payload
-     *
-     *  Useful links
-     * https://cgi.csc.liv.ac.uk/~gairing/COMP211/
-     * https://cgi.csc.liv.ac.uk/~gairing/COMP211/LN/COMP211_Topic3_Transport.pdf
-     * https://cgi.csc.liv.ac.uk/~gairing/COMP211/A2/
      * 
      */
 
@@ -151,6 +145,7 @@ public class Sender extends NetworkHost
         return true;
     }
 
+    //Shifts all the index values of packets in the window down by 1
     private final void windowShift()
     {
         for (int i = 0; i < windowSize-1; i++)
@@ -163,7 +158,7 @@ public class Sender extends NetworkHost
         fillWindow();
     }
 
-    // Removes the first element to messages to be Sent 
+    // pops the front of the queue in messagesToBeSent and resends the message
     private final void fillWindow()
     {
         for (int i = 0; i < windowSize-1; i++){
@@ -194,24 +189,19 @@ public class Sender extends NetworkHost
     // the receiving application layer.
     protected void Output(Message message)
     {
-        
-        // Incrementing the number of messages to be sent
-        messageReq++;
 
         // The acknowledgement number is equal to the number of bytes in the paylaod
         acknum = getBytes(message.getData());
-
+        seqnum++;
         // If the window is not full start the timer and add the message to the window
         if (!windowIsFull())
         {
             for (int i = 0; i < windowSize; i++){
-                System.out.println("INDEX: "+i);
                 if (window[i] == null){
                     // Sending the packet and sending it to receiver and saving the packet temporarily.
                     startTimer(t);
                     window[i] = new Packet(seqnum, acknum, checksum(message.getData()), message.getData());
                     windowSent[i] = false;
-                    System.out.println("Sending..");
                     udtSend(window[i]);
                     break;
                 }
@@ -225,17 +215,15 @@ public class Sender extends NetworkHost
     // sent from the receiver.
     protected void Input(Packet packet)
     {
-        // The timer stops because I have recieved something from the reciever
+        // The timer stops because I have recieved something from the receiver
         stopTimer();
 
         // Checking if the message was acknowedged if it was then increase
-        // the ack and seqnum. If it wasn't then try to send the message again
+        // the acknum and seqnum. If it wasn't then try to send the message again
         for (int i = 0; i < windowSize; i++){
             if (window[i] != null){
-                if (window[i].getAcknum() == packet.getAcknum()){
+                if (window[i].getAcknum() == packet.getAcknum() && window[i].getSeqnum() == packet.getSeqnum()){
                     // Accepted
-                    acknum = packet.getAcknum();
-                    seqnum += packet.getAcknum();
                     windowSent[i] = true;
                     windowShift();
                     break;        
@@ -256,7 +244,6 @@ public class Sender extends NetworkHost
     // stopTimer(), above, for how the timer is started and stopped. 
     protected void TimerInterrupt()
     {
-        System.out.println("Interrupted");
         for (int i = 0; i < windowSize; i++)
         {
             if (!windowSent[i] && window[i] != null)

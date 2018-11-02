@@ -12,10 +12,9 @@
  *************************************/
 import java.util.Random;
 
-// If messages are taking too long to send, I don't want missed messages.
-// I created an arraylist data structure to put the messages in.
-// It doesn't say that I can't import other libraries.
-// I have tested ArrayList in the linux farms and it works.
+// I created an ArrayList data structure to put the packets in.
+// It doesn't say that I can't import other libraries in the requirements so I have.
+// I have tested the ArrayList in the linux farms and it works.
 import java.util.ArrayList;
 
 public class Receiver extends NetworkHost
@@ -102,12 +101,12 @@ public class Receiver extends NetworkHost
      */
 
     // Add any necessary class variables here. They can hold
-    // state information for the receiver.
-    int sequence;
-    ArrayList<Packet> messageOrder;
+    // state information for the receiver. 
+
+    ArrayList<Packet> sequenceList; // Used as a stack to hold all of the packets
+    int sequence; // Used as an index to see what order packets are coming.
 
     // Also add any necessary methods (e.g. checksum of a String)
-
     private final int checksum(String text)
     {
         int sum = 0;
@@ -116,19 +115,33 @@ public class Receiver extends NetworkHost
         return sum;
     }
 
+    // Acknowledge the amount of bytes that were sent.
     private final int getBytes(String text)
     {
         return text.length();
     }
 
-    // private final void order(Packet p)
-    // {
-    //     int x = 0;
-    //     for (int i = 0; i < messageOrder.size(); i++)
-    //     {
-            
-    //     }
-    // }
+    // Delivers the packets in order.
+    private final void deliverInOrder()
+    {
+        boolean hasChanged = false;
+        while (sequenceList.size() != 0){
+            for (int i = 0; i < sequenceList.size(); i++)
+            {
+                if (sequenceList.get(i).getSeqnum() == sequence)
+                {
+                    deliverData(sequenceList.get(i).getPayload());
+                    sequenceList.remove(i);
+                    sequence++;
+                    hasChanged = true;
+                    break;
+                }
+            }
+            if (!hasChanged)
+                break;
+            hasChanged = false;
+        }
+    }
 
     // This is the constructor.  Don't touch!
     public Receiver(int entityName,
@@ -148,17 +161,17 @@ public class Receiver extends NetworkHost
     protected void Input(Packet packet)
     {
         // If the checksum passes then deliver the data
-        // Seq, ack, check, payload
+        // Seqnum, acknum, checksum, payload
         if (packet.getChecksum() == checksum(packet.getPayload())){
-            System.out.println("RECEIVER: Passed checksum");
-            deliverData(packet.getPayload());
+            sequenceList.add(packet);
+            deliverInOrder();
             udtSend(new Packet(packet.getSeqnum(), getBytes(packet.getPayload()), 0));
         }
         else{
-            System.out.println("RECEIVER: Failed Checksum");
             udtSend(new Packet(packet.getSeqnum(), -1, 0));
         }
     }
+
 
     
     // This routine will be called once, before any of your other receiver-side
@@ -167,8 +180,11 @@ public class Receiver extends NetworkHost
     // of the receiver).
     protected void Init()
     {
-        messageOrder = new ArrayList<Packet>();
-        sequence = 0;
+        // Initialising the sequence list.
+        sequenceList = new ArrayList<Packet>();
+        
+        // Sequence starts at 1.
+        sequence = 1; 
     }
 
 }
