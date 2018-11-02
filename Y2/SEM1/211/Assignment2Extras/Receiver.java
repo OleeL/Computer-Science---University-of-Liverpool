@@ -12,6 +12,12 @@
  *************************************/
 import java.util.Random;
 
+// If messages are taking too long to send, I don't want missed messages.
+// I created an arraylist data structure to put the messages in.
+// It doesn't say that I can't import other libraries.
+// I have tested ArrayList in the linux farms and it works.
+import java.util.ArrayList;
+
 public class Receiver extends NetworkHost
 
 {
@@ -97,7 +103,9 @@ public class Receiver extends NetworkHost
 
     // Add any necessary class variables here. They can hold
     // state information for the receiver.
-    
+    int sequence;
+    ArrayList<Packet> messageOrder;
+
     // Also add any necessary methods (e.g. checksum of a String)
 
     private final int checksum(String text)
@@ -113,6 +121,14 @@ public class Receiver extends NetworkHost
         return text.length();
     }
 
+    // private final void order(Packet p)
+    // {
+    //     int x = 0;
+    //     for (int i = 0; i < messageOrder.size(); i++)
+    //     {
+            
+    //     }
+    // }
 
     // This is the constructor.  Don't touch!
     public Receiver(int entityName,
@@ -134,12 +150,12 @@ public class Receiver extends NetworkHost
         // If the checksum passes then deliver the data
         // Seq, ack, check, payload
         if (packet.getChecksum() == checksum(packet.getPayload())){
-            System.out.println("deliverData: Passed checksum");
-            udtSend(new Packet(packet.getSeqnum(), getBytes(packet.getPayload()), 0));
+            System.out.println("RECEIVER: Passed checksum");
             deliverData(packet.getPayload());
+            udtSend(new Packet(packet.getSeqnum(), getBytes(packet.getPayload()), 0));
         }
         else{
-            System.out.println("deliverData: Failed Checksum");
+            System.out.println("RECEIVER: Failed Checksum");
             udtSend(new Packet(packet.getSeqnum(), -1, 0));
         }
     }
@@ -151,7 +167,8 @@ public class Receiver extends NetworkHost
     // of the receiver).
     protected void Init()
     {
-
+        messageOrder = new ArrayList<Packet>();
+        sequence = 0;
     }
 
 }

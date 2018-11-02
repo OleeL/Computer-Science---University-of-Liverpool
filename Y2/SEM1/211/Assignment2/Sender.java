@@ -124,7 +124,7 @@ public class Sender extends NetworkHost
         return text.length();
     }
 
-    // Runs if the 
+    // Runs if the packet is corrupt or lost
     private final void resendMessage()
     {
         startTimer(t);

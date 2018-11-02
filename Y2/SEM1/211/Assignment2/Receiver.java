@@ -109,6 +109,7 @@ public class Receiver extends NetworkHost
         return sum;
     }
 
+    // Gets the number of bytes in a given string.
     private final int getBytes(String text)
     {
         return text.length();

@@ -12,6 +12,12 @@
  *************************************/
 import java.util.Random;
 
+// If messages are taking too long to send, I don't want missed messages.
+// I created an arraylist data structure to put the messages in.
+// It doesn't say that I can't import other libraries.
+// I have tested ArrayList in the linux farms and it works.
+import java.util.ArrayList;
+
 public class Sender extends NetworkHost
 
 {
@@ -102,10 +108,13 @@ public class Sender extends NetworkHost
 
     // Add any necessary class variables here. They can hold
     // state information for the sender. 
-    private int seqnum;
-    private int acknum;
-    private Packet tmp_packet;
-    private double t;
+    private int acknum;                         // Acknowledgement Number
+    private int seqnum;                         // Sequence Number
+    private double t;                           // Time
+    private int windowSize;                     // The size of the window
+    private Packet[] window;                    // The window data structure
+    private boolean[] windowSent;               // A list to see the messages sent
+    private ArrayList<Packet> messagesToBeSent; // A list of messages that cannot be sent yet
 
     // Also add any necessary methods (e.g. checksum of a String)
 
@@ -124,12 +133,49 @@ public class Sender extends NetworkHost
         return text.length();
     }
 
-    // Runs if the 
-    private final void resendMessage()
+    // Runs if the packet is corrupt or lost
+    private final void resendMessage(Packet p)
     {
         startTimer(t);
-        udtSend(tmp_packet);
+        udtSend(p);
     }
+
+    //checks if the window is full
+    private final boolean windowIsFull()
+    {
+        for (int i = 0; i < windowSize; i++)
+        {
+            if (window[i] == null)
+                return false;
+        }
+        return true;
+    }
+
+    private final void windowShift()
+    {
+        for (int i = 0; i < windowSize-1; i++)
+        {
+            if (windowSent[i] == true){
+                window[i]     = window[i+1];
+                windowSent[i] = windowSent[i+1];
+            }
+        }
+        fillWindow();
+    }
+
+    // Removes the first element to messages to be Sent 
+    private final void fillWindow()
+    {
+        for (int i = 0; i < windowSize-1; i++){
+            if (messagesToBeSent.size() != 0 && window[i] == null)
+            {
+                window[i]     = messagesToBeSent.remove(0);
+                resendMessage(window[i]);
+                windowSent[i] = false;
+            }
+        }
+    }
+
 
     // This is the constructor.  Don't touch!
     public Sender(int entityName,
@@ -148,15 +194,29 @@ public class Sender extends NetworkHost
     // the receiving application layer.
     protected void Output(Message message)
     {
-        // Starts the timer.
-        startTimer(t);
+        
+        // Incrementing the number of messages to be sent
+        messageReq++;
 
-        // Sending the packet and sending it to receiver and saving the packet temporarily.
-        tmp_packet = new Packet(seqnum, acknum, checksum(message.getData()), message.getData());
-        udtSend(tmp_packet);
-
-        // Saving the message to a temp message variable
+        // The acknowledgement number is equal to the number of bytes in the paylaod
         acknum = getBytes(message.getData());
+
+        // If the window is not full start the timer and add the message to the window
+        if (!windowIsFull())
+        {
+            for (int i = 0; i < windowSize; i++){
+                System.out.println("INDEX: "+i);
+                if (window[i] == null){
+                    // Sending the packet and sending it to receiver and saving the packet temporarily.
+                    startTimer(t);
+                    window[i] = new Packet(seqnum, acknum, checksum(message.getData()), message.getData());
+                    windowSent[i] = false;
+                    System.out.println("Sending..");
+                    udtSend(window[i]);
+                    break;
+                }
+            }
+        }
     }
     
     // This routine will be called whenever a packet sent from the receiver
@@ -170,18 +230,24 @@ public class Sender extends NetworkHost
 
         // Checking if the message was acknowedged if it was then increase
         // the ack and seqnum. If it wasn't then try to send the message again
-        if (acknum == packet.getAcknum()){
-            
-            // Accepted
-            acknum = packet.getAcknum();
-            seqnum += packet.getAcknum();
+        for (int i = 0; i < windowSize; i++){
+            if (window[i] != null){
+                if (window[i].getAcknum() == packet.getAcknum()){
+                    // Accepted
+                    acknum = packet.getAcknum();
+                    seqnum += packet.getAcknum();
+                    windowSent[i] = true;
+                    windowShift();
+                    break;        
+                }
+                else
+                {
+                    // Message that was sent was corrupt
+                    resendMessage(window[i]);
+                    break;
+                }
+            }
         }
-        else
-        {
-            // Message that was sent was corrupt
-            resendMessage();
-        }
-
     }
     
     // This routine will be called when the senders's timer expires (thus 
@@ -190,7 +256,12 @@ public class Sender extends NetworkHost
     // stopTimer(), above, for how the timer is started and stopped. 
     protected void TimerInterrupt()
     {
-        resendMessage();
+        System.out.println("Interrupted");
+        for (int i = 0; i < windowSize; i++)
+        {
+            if (!windowSent[i] && window[i] != null)
+                resendMessage(window[i]);
+        }
     }
     
     // This routine will be called once, before any of your other sender-side 
@@ -200,9 +271,13 @@ public class Sender extends NetworkHost
 
     protected void Init()
     {
-        seqnum = 0;
-        acknum = 0;
-        t = 40;
+        acknum = 0;                                   // Acknowledgement number
+        seqnum = 0;                                   // Sequence number
+        t = 40;                                       // Time
+        windowSize = 8;                               // Size
+        window = new Packet[windowSize];              // Window
+        windowSent = new boolean[windowSize];         // Messages sent
+        messagesToBeSent = new ArrayList<Packet>();   // A list of messages that cannot be sent yet
     }
 
 }
