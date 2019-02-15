@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<project name="firstbuild" default="compile" >
+	<target name="compile">
+		<javac srcdir="." includeAntRuntime="no"/>
+			 <!-- It is usually best to set includeAntRuntime to
+			"false" or "no"
+			 so the script's behaviour is not sensitive to the
+			environment
+			 in which it is run. See
+			C:\JAVA\Ant1.8.1\docs\manual\index.html
+			 on <javac> task.
+			 -->
+		<echo>compilation complete!</echo>
+	</target>
+</project>
