@@ -16,7 +16,7 @@ public class BreakCaesar
 	public static char[] alphabetlower = new char[26];
 	public static char[] alphabetupper = new char[26];
         
-    //the main handles the user input and prints all of the decryted data
+    	//the main handles the user input and prints all of the decryted data
 	public static void main(String[] args)
 	{
 		//if the user doesnt pass any args, exit the program
