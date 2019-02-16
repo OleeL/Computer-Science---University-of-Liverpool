@@ -5,16 +5,10 @@
 *
 * User: sgolegg
 *
-* Problem ID: 1006
+* Problem ID: 1015
 * RunID: 22456
 * Result: Accepted
 */
-
-#include <stdio.h>
-#define M_PI 3.14
-
-float area(float num);
-float circumferance(float num);
 
 int main(void)
 {
@@ -47,16 +41,4 @@ int main(void)
     printf("%.3f\n", a_sum);
     printf("%.3f", c_sum); 
     return 0;
-}
-
-// calculates the area of a circle
-float area(float num)
-{
-    return M_PI*(num*num);
-}
-
-// calculates the circumferance of a circle
-float circumferance(float num)
-{
-    return 2*M_PI*num;
 }
