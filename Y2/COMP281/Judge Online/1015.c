@@ -6,39 +6,44 @@
 * User: sgolegg
 *
 * Problem ID: 1015
-* RunID: 22456
+* RunID: 24201
 * Result: Accepted
 */
+#include <stdio.h>
+#include <stdlib.h>
+
+
+// Creating a linked list
+typedef struct node {
+    int number;
+    struct node * next;
+} node_t;
+
+// Outputs the entire list
+void print_list(node_t * head) {
+    node_t * current = head;
+    while (current != NULL) {
+        printf("%c", current->number);
+        current = current->next;
+    }
+}
 
 int main(void)
 {
-    float a, b, r1, r2;
-    float a_sum, c_sum = 0;
+    int number;
+    node_t * head = malloc(sizeof(node_t));
+    node_t * current = head;
+    current->next = head; // this line is just to make it compatible with the next section
 
-    // takes input as range
-    scanf("%f", &a);
-    scanf("%f", &b);
-
-    // r1 must be the smaller number in order for the range to make sense
-    if (a <= b){
-        r1 = a;
-        r2 = b;
-    }
-    else
+    // takes the input of the user and creates the next link in the list
+    while (scanf("%d", &number) != EOF)
     {
-        r1 = b;
-        r2 = a;
+        current = current->next;
+        current->number = number;
+        current->next = malloc(sizeof(node_t));
+        current->next->next = NULL;
     }
-
-    // adding up the range of areas seperate to the circumferance of circle range.
-    for (int i = r1; i <= r2; i ++)
-    {
-        a_sum += area(i);
-        c_sum += circumferance(i);
-    }
-
-    // outputting the sums
-    printf("%.3f\n", a_sum);
-    printf("%.3f", c_sum); 
+    current->next = NULL;
+    print_list(head);
     return 0;
 }

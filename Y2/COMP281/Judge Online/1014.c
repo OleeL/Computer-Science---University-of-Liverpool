@@ -18,26 +18,26 @@ float circumferance(float num);
 
 int main(void)
 {
-    float a, b, r1, r2;
-    float a_sum, c_sum = 0;
+    float input1, input2, radius1, radius2;
+    float a_sum = 0, c_sum = 0;
 
     // takes input as range
-    scanf("%f", &a);
-    scanf("%f", &b);
+    scanf("%f", &input1);
+    scanf("%f", &input2);
 
-    // r1 must be the smaller number in order for the range to make sense
-    if (a <= b){
-        r1 = a;
-        r2 = b;
+    // radius1 must be the smaller number in order for the range to make sense
+    if (input1 <= input2){
+        radius1 = input1;
+        radius2 = input2;
     }
     else
     {
-        r1 = b;
-        r2 = a;
+        radius1 = input2;
+        radius2 = input1;
     }
 
     // adding up the range of areas seperate to the circumferance of circle range.
-    for (int i = r1; i <= r2; i ++)
+    for (int i = radius1; i <= radius2; i ++)
     {
         a_sum += area(i);
         c_sum += circumferance(i);
