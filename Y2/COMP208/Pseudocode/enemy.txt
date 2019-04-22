@@ -1,0 +1,27 @@
+ABSTRACT CLASS enemy(INTEGER x, INTEGER y)
+
+    FILE texture
+    FLOAT rateOfFire
+    INTEGER range
+    INTEGER x
+    INTEGER y
+    INTEGER speed
+    INTEGER damage
+
+    FUNCTION ABSTRACT upgrade()
+
+    FUNCTION getX()
+        RETURN x
+    END
+
+    FUNCTION getY()
+        RETURN y
+    END
+
+    FUNCTION move_to(INTEGER pos_x, INTEGER pos_y)
+        IF pos_x != x AND x THEN
+            RETURN FALSE
+        END
+    END
+
+END

@@ -1,0 +1,28 @@
+ABSTRACT CLASS Turret(x, y)
+
+    FILE texture
+    FLOAT rateOfFire
+    INTEGER range
+    INTEGER x
+    INTEGER y
+    INTEGER level
+    INTEGER MAX_UPGRADE = 3
+    INTEGER damage
+
+    FUNCTION ABSTRACT upgrade()
+
+    FUNCTION getX()
+        RETURN x
+    END
+
+    FUNCTION getY()
+        RETURN y
+    END
+
+    FUNCTION fire_at_enemy(enemy)
+        AIM_AT(enemy)
+        FIRE()
+        WAIT(rateOfFire)
+    END
+
+END

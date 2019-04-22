@@ -1,0 +1,34 @@
+CLASS Turret_II EXTENDS Turret
+
+    INTEGER range = 600
+    INTEGER level = 1
+    INTEGER damage = 20
+    FLOAT rateOfFire = 0.5
+
+    FUNCTION create(x, y)
+        PUSH_TO_ABSTRACT_CLASS(x, y, "Turret_II.png")
+    END
+
+    FUNCTION getX()
+        RETURN x
+    END
+
+    FUNCTION getY()
+        RETURN y
+    END
+
+    FUNCTION fire_at_enemy(enemy)
+        AIM_AT(enemy)
+        FIRE()
+        WAIT(rateOfFire)
+    END
+
+    FUNCTION upgrade()
+        IF level < MAX_LEVEL THEN
+            rateOfFire = rateOfFire - 0.2
+            range = range + 120
+            damage = damage + 3
+            level = level + 1
+        END
+    END
+END
