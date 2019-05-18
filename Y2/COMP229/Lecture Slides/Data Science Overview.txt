@@ -1,0 +1,28 @@
+Data clouds and metric spaces
+Linear transformations
+Geometric invariants
+Isometric point clouds
+Areas and volumes
+Data represented by graphs
+Connectivity of graphs
+Topological invariants of graphs
+Counting cycles in graphs
+Euler’s theorem for planar graphs
+Kuratowski’s criterion of planarity
+Descriptive statistics
+Scatterplots and correlation
+A simple linear regression
+The normal distribution
+Confidence intervals
+Statistical significance
+Invariants of linear maps
+A change of a linear basis
+Eigenvalues and eigenvectors
+The covariance matrix
+Principal Component Analysis
+Singular Value Decomposition
+Hierarchical clustering
+Centroid-based clustering
+Voronoi diagrams
+Delaunay triangulations
+Alpha-complexes of clouds
